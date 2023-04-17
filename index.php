@@ -37,23 +37,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && ( isset($_POST["Addbook_copies"]) ||
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset( $_POST["borrow"] ) ){
 
   $user_id= $_SESSION['user_id'];
-
-  $NumberOfPending = $mysqli -> query("select status from requests where user_id=$user_id  and status='pending' ")->fetch_all(MYSQLI_ASSOC);
-  $NumberOfPending = count($NumberOfPending);
-
-
-  $timenow  = date("Y-m-d  H:i:s", strtotime("+2 hours") );
-  $st = $mysqli->prepare("insert into requests (user_id, book_id, requestDate) values(?, ?, ?) ");
-  $st -> bind_param("dds", $user_id, $book_id,$timenow);
   $book_id = $_POST['book_id'];
-  $st -> execute();
+  $NumberOfTotalPending = $mysqli -> query("select status from requests where user_id=$user_id  and status='pending' ")->fetch_all(MYSQLI_ASSOC);
+  $NumberOfTotalPending = count($NumberOfTotalPending);
+  $HasPendingSameBook = $mysqli -> query("select * from requests where user_id=$user_id and book_id=$book_id and status='pending' ")->fetch_all(MYSQLI_ASSOC);
+  $NumberOfSamePending = count($HasPendingSameBook);
 
-  if($st->error) echo $st->error;
-  else{
-      $_SESSION['success_message'] = "Request sent successfully";
-      echo "<script>location.href='index.php'</script>";
+  #Check if the user has 3 pending request ( for three diffrent books)
+  if($NumberOfTotalPending>=3){
+    array_push($errors,"Can't Send a new request while you have 3 pending requests");
+  }else if($NumberOfSamePending>0){   #Check if the user has pending request ( for the same book)
+    array_push($errors,"Can't Send a new request while you a pending one to the same book");
+  }else {
+
+    $timenow  = date("Y-m-d  H:i:s", strtotime("+2 hours") );
+    $st = $mysqli->prepare("insert into requests (user_id, book_id, requestDate) values(?, ?, ?) ");
+    $st -> bind_param("dds", $user_id, $book_id,$timenow);
+    $st -> execute();
+
+    if($st->error) echo $st->error;
+    else{
+        $_SESSION['success_message'] = "Request sent successfully";
+        echo "<script>location.href='index.php'</script>";
+    }
   }
-
 
 }
 
