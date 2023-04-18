@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset( $_POST["borrow"] ) ){
   #Check if the user has 3 pending request ( for three diffrent books)
   if($NumberOfTotalPending>=3){
     array_push($errors,"Can't Send a new request while you have 3 pending requests");
-  }else if($NumberOfSamePending>0){   #Check if the user has pending request ( for the same book)
+  }else if($NumberOfSamePending>0){   #Check if the user has pending request ( for the same book )
     array_push($errors,"Can't Send a new request while you a pending one to the same book");
   }else {
 
