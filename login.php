@@ -19,8 +19,9 @@ $email ='';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-  $email = $_POST['email'];
-  $password = $_POST['password'];
+  #Filter the input from sql
+  $email = mysqli_real_escape_string($mysqli,$_POST['email']);
+  $password = mysqli_real_escape_string($mysqli,$_POST['password']);
 
   if(empty($email))array_push($errors,"Email is required");
   if(empty($password))array_push($errors,"Password is required");

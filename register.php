@@ -18,10 +18,11 @@ $name ='';
 $password='';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-  $email = $_POST['email'];
-  $name = $_POST['name'];
-  $password = $_POST['password'];
-  $password_confirmation = $_POST['password_confirmation'];
+  #Filter the input from sql
+  $email = mysqli_real_escape_string($mysqli,$_POST['email']);
+  $name = mysqli_real_escape_string($mysqli,$_POST['name']);
+  $password = mysqli_real_escape_string($mysqli,$_POST['password']);
+  $password_confirmation = mysqli_real_escape_string($mysqli,$_POST['password_confirmation']);
 
   if(empty($email))array_push($errors,"Email is required");
   if(empty($name))array_push($errors,"Name is required");
@@ -44,8 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $InsertQuery = "insert into users(email,name,password) values ('$email','$name','$password')";
     $mysqli ->query($InsertQuery);
 
-    #$_SESSION['logged_in']=true;
-    #$_SESSION['user_id']= $mysqli->insert_id;
+    
     $_SESSION['success_message'] = "Registered successed";
     header('location: login.php');
     die();
