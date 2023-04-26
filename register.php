@@ -18,7 +18,6 @@ $name ='';
 $password='';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-  #Filter the input from sql
   $email = mysqli_real_escape_string($mysqli,$_POST['email']);
   $name = mysqli_real_escape_string($mysqli,$_POST['name']);
   $password = mysqli_real_escape_string($mysqli,$_POST['password']);
@@ -45,7 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $InsertQuery = "insert into users(email,name,password) values ('$email','$name','$password')";
     $mysqli ->query($InsertQuery);
 
-    
+    #$_SESSION['logged_in']=true;
+    #$_SESSION['user_id']= $mysqli->insert_id;
     $_SESSION['success_message'] = "Registered successed";
     header('location: login.php');
     die();
