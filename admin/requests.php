@@ -10,7 +10,7 @@ $requests = $mysqli -> query("select * from requests order by request_id")-> fet
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
   $requestId = $_POST["request_id"];
-  $timenow  = date("Y-m-d  H:i:s", strtotime("+2 hours") );
+  $timenow  = date("Y-m-d  H:i:s", strtotime("+1 hours") );
 
   if( isset($_POST["approve"]) || isset($_POST["decline"]) ){
 

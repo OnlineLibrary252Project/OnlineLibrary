@@ -44,8 +44,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $InsertQuery = "insert into users(email,name,password) values ('$email','$name','$password')";
     $mysqli ->query($InsertQuery);
 
-    #$_SESSION['logged_in']=true;
-    #$_SESSION['user_id']= $mysqli->insert_id;
+    // Log file
+    $log = "New User has been created using this email :".$email;
+    logger($log);
+
+
     $_SESSION['success_message'] = "Registered successed";
     header('location: login.php');
     die();

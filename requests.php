@@ -2,9 +2,7 @@
 $title = "Requests";
 $icon = "nc-layers-3";
 include __DIR__.'/template/header.php';
-$timeNow = date("Y-m-d  H:i:s");
 
-$expires_at = date("Y-m-d  H:i:s" , strtotime("+1 day"));
 ?>
 
 <div class="card">

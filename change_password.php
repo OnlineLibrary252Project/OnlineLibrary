@@ -24,7 +24,7 @@ $stmt -> execute();
 
 $tokenValidation = $stmt->get_result();
 
-// If number of rows was 0 then the ! symbol will make it 1 and page will die 
+// If number of rows was 0 then the ! symbol will make it 1 and page will die
 if ( ! $tokenValidation-> num_rows ) {
   die("Token is invalid");
 }
@@ -49,6 +49,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $mysqli -> query("UPDATE users SET password = '$password' WHERE id = '$userId' ");
 
+    // Log file
+    $log = "User_ID: ".$userId." has updated his password.";
+    logger($log);
 
     //Delete previous tokens
     $mysqli -> query("DELETE FROM reset_password WHERE user_id = '$userId' ");

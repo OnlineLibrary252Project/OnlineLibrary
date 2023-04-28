@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'config/app.php';
+require_once 'logger/logger.php';
 ?>
 <!DOCTYPE html>
 <html lang=<?php echo $config['lang']; ?> dir=<?php echo $config['dir']; ?>>
