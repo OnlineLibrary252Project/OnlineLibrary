@@ -2,28 +2,35 @@
 $title="Main Page";
 require_once 'template/header.php';
 require_once 'classes/User.php';
-
-//setcookie('username','Nawaf',time()+30*24*60*60);
+require_once 'emailSender.php';
 
 
 $errors=[];
 
 $user = new User();
 
-
+// For admin only
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && ( isset($_POST["Addbook_copies"]) || isset($_POST["Minusbook_copies"]) ) ){
-
+  $numberOfCopies = $_POST["Addbook_copies"];
   if(isset( $_POST["Addbook_copies"] )){
-    $copies =  $_POST["Addbook_copies"] + 1;
+    //To send notifications
+    if($numberOfCopies == 0){
+      $book_id= $_POST['book_id'];
+      $UsersEmails = $mysqli->query("select email from notifications where book_id=$book_id"); //This is supposed to be in emailSender.php but am facing minor problems with it
+      NotifyUsersByEmail($UsersEmails);
+      $DeleteUsersEmail = $mysqli->query("delete from notifications where book_id=$book_id"); //Delete emails after notifying them
+    }
+    //Increase the copies by one
+    $numberOfCopies =  $numberOfCopies + 1;
   }
   elseif (isset( $_POST["Minusbook_copies"] )){
     if(empty( $_POST["Minusbook_copies"] ))array_push($errors,"There is no copies to reduce");
-    $copies = $_POST["Minusbook_copies"] - 1;
+    $numberOfCopies = $_POST["Minusbook_copies"] - 1;
   }
 
   if(!count($errors)){
   $st = $mysqli->prepare("update books set copies = ? where id = ?");
-  $st -> bind_param("ii", $copies, $IdToDelete);
+  $st -> bind_param("ii", $numberOfCopies, $IdToDelete);
   $IdToDelete = $_POST['book_id'];
   $st -> execute();
 
@@ -34,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && ( isset($_POST["Addbook_copies"]) ||
 
 }
 
+//User Borrow button
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset( $_POST["borrow"] ) ){
 
   $user_id= $_SESSION['user_id'];
@@ -58,6 +66,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset( $_POST["borrow"] ) ){
     if($st->error) echo $st->error;
     else{
         $_SESSION['success_message'] = "Request sent successfully";
+        echo "<script>location.href='index.php'</script>";
+    }
+  }
+
+}
+
+//User Notification button ( Add the user info into notifications table )
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset( $_POST["notify"] ) ){
+
+  //Prepare users info
+  $user_id= $_SESSION['user_id'];
+  $book_id = $_POST['book_id'];
+  $getEmail = $mysqli -> query("select email from users where id=$user_id")->fetch_assoc();
+  $getEmail = $getEmail['email'];
+
+  //Check if the user is already in the notification list for the same book
+  $HasNotifySameBook = $mysqli -> query("select id from notifications where email='$getEmail' and book_id=$book_id")->fetch_all(MYSQLI_ASSOC);
+  $HasNotifySameBook = count($HasNotifySameBook);
+
+  if ($HasNotifySameBook>0) {
+    array_push($errors,"You are already in the notification list");
+  }else{
+    $st = $mysqli->prepare("insert into notifications (book_id, email) values(?, ?) ");
+    $st -> bind_param("ds", $book_id, $getEmail);
+    $st -> execute();
+
+    if($st->error) echo $st->error;
+    else{
+        $_SESSION['success_message'] = "Notification request sent successfully";
         echo "<script>location.href='index.php'</script>";
     }
   }
@@ -144,7 +181,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET' && !empty($_GET['search']) ){ ?>
   </form>
 
 
-  <?php $books = $mysqli->query("select * from books"); ?>
+  <?php $books = $mysqli->query("select * from books");?>
 
   <div class="row">
       <?php foreach ($books as $book) {
@@ -188,6 +225,19 @@ if($_SERVER['REQUEST_METHOD'] == 'GET' && !empty($_GET['search']) ){ ?>
               </div>
 
             <?php } ?>
+
+            <?php // Notify Button appears to the user only (when book's copy is zero)
+             if($user->isLoggedIn() && $_SESSION['user_role']=='user' &&  $book["copies"]==0){ ?>
+             <div class="">
+
+              <form action="" method="post" style="display: inline">
+                <input type="hidden" name="book_id" value="<?php echo $book["id"]; ?>">
+                <button onclick="confirm('Are you sure?')" class="btn btn-success" type="submit" name="notify">Notify when available</button>
+              </form>
+
+             </div>
+
+           <?php } ?>
 
            <?php
            // Add Button appears to the admin only  (copies)
