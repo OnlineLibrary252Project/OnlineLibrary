@@ -101,7 +101,7 @@ require_once 'adapter/GoogleBooksAdapter.php';
         <?php
         if (isset($_GET['query'])) {
             $query = mysqli_real_escape_string($mysqli,$_GET['query']);
-            $apiKey = 'AIzaSyAfFnJ0npfO5l-PD0Sua9sl_r-xFedgg5I';
+            $apiKey = 'XXXXXX';
             $adapter = new GoogleBooksAdapter($apiKey);
             $books = $adapter->searchBooks($query);
             if (!empty($books)) {
