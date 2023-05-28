@@ -33,7 +33,10 @@ require_once 'logger/logger.php';
           <li class="nav-item active">
             <a class="nav-link" href="<?php echo $config['app_url']; ?>">Books</a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item active">
+            <a class="nav-link" href="<?php echo $config['app_url']."GoogleApi.php"; ?>">Google Books Api</a>
+          </li>
+          <li class="nav-item active">
             <a class="nav-link" href="<?php echo $config['app_url']."contact.php"?>">Contact Us</a>
           </li>
 
