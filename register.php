@@ -45,8 +45,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $mysqli ->query($InsertQuery);
 
     // Log file
+    $logger = Logger::getInstance();
     $log = "New User has been created using this email :".$email;
-    logger($log);
+    $logger->log($log);
 
 
     $_SESSION['success_message'] = "Registered successed";

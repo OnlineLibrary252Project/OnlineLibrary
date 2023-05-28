@@ -42,8 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
           $_SESSION['user_role'] = $foundUser["role"];
 
           // Log file
+          $logger = Logger::getInstance();
           $log = "User_ID:" .$_SESSION['user_id']. ", email :".$email." has successfuly logged in.";
-          logger($log);
+          $logger->log($log);
 
 
           if($_SESSION['user_role'] == 'admin'){

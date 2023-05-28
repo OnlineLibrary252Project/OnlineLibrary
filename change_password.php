@@ -50,8 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $mysqli -> query("UPDATE users SET password = '$password' WHERE id = '$userId' ");
 
     // Log file
+    $logger = Logger::getInstance();
     $log = "User_ID: ".$userId." has updated his password.";
-    logger($log);
+    $logger->log($log);
 
     //Delete previous tokens
     $mysqli -> query("DELETE FROM reset_password WHERE user_id = '$userId' ");
