@@ -18,7 +18,7 @@ This is the landing page of the project for users who are not logged in.
 
 This is the landing page of the project for users who have logged in.
 
-![Index.php (After Login)](252ProjectPhotos252ProjectPhotos/indexAfterLogin.png)
+![Index.php (After Login)](252ProjectPhotos/indexAfterLogin.png)
 
 ### Requests.php (For Users)
 
